@@ -13,7 +13,6 @@ export async function generateOutputs(config: Config = defaultConfig) {
     const meta = new PostgresMetaWithChecks({ connectionString: config.url })
 
     const context = await makeContext(meta, config)
-    console.log(context.tables)
 
     const outputs: Output[] = []
 

@@ -8,7 +8,7 @@ import { generateOutputs } from '@/lib/generate'
 
 export default defineCommand({
     meta: {
-        name: 'gen:schemas',
+        name: 'schemas',
         description: 'Generate Zod schemas from Supabase/Postgres',
     },
     args: {
@@ -25,7 +25,10 @@ export default defineCommand({
         },
     },
     async run({ args }) {
-        const config = await loadConfigFromArgs(args)
+        const config = await loadConfigFromArgs({
+            url: args.url,
+            schemas: args.schemas,
+        })
 
         const outputs = await generateOutputs(config)
 

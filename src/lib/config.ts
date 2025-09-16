@@ -1,19 +1,23 @@
-import type { AppHooks } from '@/lib/hooks'
+import type { AppHooks, OutputHooks } from '@/lib/hooks'
 
 import * as array from '@/utils/array'
-import { getDbUrlFromCli } from './supabase'
+import { getDbUrlFromCli } from '@/lib/supabase'
 import defu from 'defu'
 
 export type ConfiguredOutput = {
     path: string
+    clear: boolean
     hooks?: Partial<{
-        [K in keyof AppHooks]: AppHooks[K] | AppHooks[K][]
+        [K in keyof OutputHooks]: OutputHooks[K] | OutputHooks[K][]
     }>
 }
 
 export type Config = {
     url: string
     schemas: string[]
+    hooks?: Partial<{
+        [K in keyof AppHooks]: AppHooks[K] | AppHooks[K][]
+    }>
     outputs: ConfiguredOutput[]
 }
 
@@ -27,7 +31,7 @@ export const defaultConfig: Config = {
 }
 
 /**
- * Read a secret from env or throws
+ * Read a secret from env or throw
  */
 export function readSecret(key: string) {
     const value = process.env[key]

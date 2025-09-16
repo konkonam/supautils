@@ -1,13 +1,8 @@
+import type { MappedColumn } from '@/lib/map'
 import { toCamelCase } from '@/utils/string'
-import type { PostgresTable } from '@supabase/postgres-meta'
 
-type FieldParams = {
-    table: PostgresTable
-    field: PostgresTable['columns'][number]
-}
-
-export default function transformField({ table, field }: FieldParams) {
-    switch (field.data_type) {
+export default function pick(mappedColumn: MappedColumn) {
+    switch (mappedColumn.type) {
         case 'text': {
             return makeString({ table, field })
         }

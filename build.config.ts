@@ -14,8 +14,4 @@ export default defineBuildConfig({
             ext: 'mjs',
         },
     ],
-
-    replace: {
-        ROLLUP_REPLACE_VIRTUAL_MODULES: 'false',
-    },
 })

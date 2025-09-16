@@ -1,6 +1,5 @@
 import { defineCommand, runMain } from 'citty'
 
-// Root CLI command
 const main = defineCommand({
     meta: {
         name: 'supautils',
@@ -8,7 +7,7 @@ const main = defineCommand({
         description: 'Utilities to generate Zod schemas from Supabase/Postgres',
     },
     subCommands: {
-        'gen:schemas': () => import('./commands/gen-schemas').then(r => r.default),
+        gen: () => import('./commands/generate').then(r => r.default),
     },
 })
 

@@ -12,14 +12,21 @@ export type MappedColumn = {
 export type MappedTable = {
     name: string
     columns: MappedColumn[]
+    dependencies: string[]
 }
 
+/**
+ * Extracts the default value from a column
+ */
 export function extractDefault(column: PostgresColumn) {
     if (!column.default_value) return null
 
-    return column.default_value
+    return String(column.default_value)
 }
 
+/**
+ * Extracts the min value from a column and its checks
+ */
 export function extractMin(column: PostgresColumn, checks: PostgresCheck[]) {
     const relevant = checks.filter(c => c.column_name === column.name)
 
@@ -29,9 +36,11 @@ export function extractMin(column: PostgresColumn, checks: PostgresCheck[]) {
         )
         if (match) return match[1]
     }
-    return null
 }
 
+/**
+ * Extracts the max value from a column and its checks
+ */
 export function extractMax(column: PostgresColumn, checks: PostgresCheck[]) {
     const relevant = checks.filter(c => c.column_name === column.name)
 
@@ -42,12 +51,30 @@ export function extractMax(column: PostgresColumn, checks: PostgresCheck[]) {
         )
         if (match) return match[1]
     }
-    return null
 }
 
+/**
+ * Extracts the dependencies from a table
+ */
+export function extractTableDependencies(table: PostgresTable) {
+    const dependencies = []
+
+    table.relationships?.forEach(({ target_table_name }) => {
+        dependencies.push(target_table_name)
+    })
+
+    console.log(dependencies)
+
+    return dependencies
+}
+
+/**
+ * Converts PostgresColumn to MappedColumn
+ */
 export function mapColumn(column: PostgresColumn, tableChecks: PostgresCheck[]): MappedColumn {
     const checks = tableChecks.filter(check => check.column_name === column.name)
 
+    const defaultValue = extractDefault(column)
     const min = extractMin(column, checks)
     const max = extractMax(column, checks)
 
@@ -55,21 +82,33 @@ export function mapColumn(column: PostgresColumn, tableChecks: PostgresCheck[]):
         name: column.name,
         type: column.data_type,
         nullable: column.is_nullable,
+        default: defaultValue,
         min,
         max,
-        default: String(column.default_value),
     }
 }
 
+/**
+ * Converts PostgresTable to MappedTable
+ */
 export function mapTable(table: PostgresTable, allChecks: PostgresCheck[]) {
     const checks = allChecks.filter(check => check.table_name === table.name)
+    const columns = table.columns.map(column => mapColumn(column, checks))
+
+    const dependencies = extractTableDependencies(columns)
 
     return {
         name: table.name,
-        columns: table.columns.map(column => mapColumn(column, checks)),
+        columns,
+        // Dependencies are other tables that are referenced by this table
+        // @TODO: add foreign keys, enums, etc.
+        dependencies,
     } satisfies MappedTable
 }
 
+/**
+ * Converts PostgresTable[] to MappedTable[]
+ */
 export function mapTables(tables: PostgresTable[], checks: PostgresCheck[]) {
     return tables.map(table => mapTable(table, checks))
 }

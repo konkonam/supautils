@@ -7,7 +7,9 @@ import consola from 'consola'
 const outs = await generateOutputs({
     url: 'postgres://postgres:postgres@localhost:54322/postgres',
     schemas: ['public'],
-    outputs: [],
+    outputs: [{
+        path: 'schemas.ts',
+    }],
 }).catch((e) => {
     console.error(e)
 })

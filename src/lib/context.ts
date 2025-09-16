@@ -1,14 +1,14 @@
 import type { Config } from '@/lib/config'
 import type { PostgresMetaWithChecks } from '@/lib/meta'
 
-import { hooks } from '@/lib/hooks'
+import { appHooks } from '@/lib/hooks'
 import { mapTables, type MappedTable } from '@/lib/map'
 
 export interface Context {
     meta: PostgresMetaWithChecks
     config: Config
     tables: MappedTable[]
-    hook: typeof hooks['hook']
+    hook: typeof appHooks['hook']
 }
 
 export async function makeContext(
@@ -19,7 +19,7 @@ export async function makeContext(
         meta,
         config,
         tables: [],
-        hook: hooks.hook.bind(hooks),
+        hook: appHooks.hook.bind(appHooks),
     }
 
     const tables = await meta.tables.list({
