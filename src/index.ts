@@ -1,15 +1,14 @@
-import { generateOutputs } from './lib/generate'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import consola from 'consola'
+import { generateOutputs } from './lib/generate'
+
+import zod from '@/lib/outputs/zod'
 
 // Example usage
 const outs = await generateOutputs({
     url: 'postgres://postgres:postgres@localhost:54322/postgres',
-    schemas: ['public'],
-    outputs: [{
-        path: 'schemas.ts',
-    }],
+    tables: ['public.*'],
+    outputs: [zod],
 }).catch((e) => {
     console.error(e)
 })
@@ -18,6 +17,6 @@ const outPath = path.resolve(process.cwd(), 'schemas.ts')
 await fs.mkdir(path.dirname(outPath), { recursive: true })
 await fs.writeFile(outPath, outs[0].content, 'utf8')
 
-consola.success(`Wrote ${outPath}`)
+console.log(`Wrote ${outPath}`)
 
 export { generateOutputs }

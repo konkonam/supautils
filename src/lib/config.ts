@@ -1,20 +1,46 @@
-import type { AppHooks, OutputHooks } from '@/lib/hooks'
+import type { MappedColumn, MappedTable } from '@/lib/map'
+import type { AppHooks } from '@/lib/hooks'
 
 import * as array from '@/utils/array'
 import { getDbUrlFromCli } from '@/lib/supabase'
 import defu from 'defu'
 
+export type TransformColumnPayload = {
+    column: MappedColumn
+    transformers: Transformers
+}
+
+export type TransformTablePayload = {
+    table: MappedTable
+    columns: string
+}
+
+export type Transformers = {
+    // types
+    'transform:string': (payload: TransformColumnPayload) => string
+    'transform:number': (payload: TransformColumnPayload) => string
+    'transform:boolean': (payload: TransformColumnPayload) => string
+    'transform:date': (payload: TransformColumnPayload) => string
+    'transform:unknown': (payload: TransformColumnPayload) => string
+
+    // constraints
+    'transform:default': (payload: TransformColumnPayload) => string
+    'transform:min': (payload: TransformColumnPayload) => string
+    'transform:max': (payload: TransformColumnPayload) => string
+
+    // table
+    'transform:table': (payload: TransformTablePayload) => string
+}
+
 export type ConfiguredOutput = {
     path: string
-    clear: boolean
-    hooks?: Partial<{
-        [K in keyof OutputHooks]: OutputHooks[K] | OutputHooks[K][]
-    }>
+    clear?: boolean
+    transformers: Transformers
 }
 
 export type Config = {
     url: string
-    schemas: string[]
+    tables: string[]
     hooks?: Partial<{
         [K in keyof AppHooks]: AppHooks[K] | AppHooks[K][]
     }>
@@ -26,7 +52,7 @@ export type Config = {
  */
 export const defaultConfig: Config = {
     url: 'postgres://postgres:postgres@localhost:5432/postgres',
-    schemas: ['public'],
+    tables: ['public.*'],
     outputs: [],
 }
 
@@ -48,7 +74,7 @@ export function readSecret(key: string) {
 export function loadConfigFromEnv(): Config {
     return {
         url: readSecret('SUPABASE_DB_URL'),
-        schemas: array.fromString(readSecret('SUPABASE_SCHEMAS')),
+        tables: array.fromString(readSecret('SUPABASE_SCHEMAS')),
     }
 }
 
@@ -58,8 +84,7 @@ export function loadConfigFromEnv(): Config {
 export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()): Promise<Config> {
     return {
         url: await getDbUrlFromCli(cwd),
-        schemas: defaultConfig.schemas,
-        outputs: [],
+        tables: defaultConfig.tables,
     }
 }
 

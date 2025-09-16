@@ -1,8 +1,8 @@
-import type { Config } from '@/lib/config'
 import type { PostgresMetaWithChecks } from '@/lib/meta'
+import type { Config } from '@/lib/config'
 
-import { appHooks } from '@/lib/hooks'
 import { mapTables, type MappedTable } from '@/lib/map'
+import { appHooks } from '@/lib/hooks'
 
 export interface Context {
     meta: PostgresMetaWithChecks
