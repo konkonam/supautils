@@ -1,0 +1,41 @@
+# dev/build outputs
+dist
+coverage
+.output
+.data
+.nuxt
+.nitro
+.cache
+
+# dependencies
+node_modules
+package-lock.json
+bun.lockb
+yarn.lock
+
+# logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+.vscode
+
+# Local env files
+.env
+.env.*
+
+**/.env
+**/.env.*
+
+!.env.example
+!**/.env.example
+
+.direnv
+
+# certificates
+*.pem
+.env*.local
+.vercel

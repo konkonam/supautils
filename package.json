@@ -1,0 +1,74 @@
+{
+  "name": "supautils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Supa utilities for supabase 🚀",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konkonam/supautils.git"
+  },
+  "homepage": "https://github.com/konkonam/supautils.git",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "bin": {
+    "supautils": "./bin/supautils"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "unbuild"
+  },
+  "peerDependencies": {
+    "supabase": "^2.22.6"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^1.9.0",
+    "@types/bun": "^1.2.20",
+    "eslint": "^9.34.0",
+    "typescript": "^5.9.2",
+    "unbuild": "^3.6.1",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.0.6"
+  },
+  "keywords": [
+    "supabase",
+    "supabase-js",
+    "validation",
+    "schemas",
+    "zod",
+    "typescript",
+    "codegen"
+  ],
+  "engines": {
+    "node": "^18.x || ^20.x || ^22.x || ^24.x"
+  },
+  "trustedDependencies": [
+    "esbuild"
+  ],
+  "dependencies": {
+    "@supabase/postgres-meta": "^0.91.6",
+    "citty": "^0.1.6",
+    "consola": "^3.4.2",
+    "defu": "^6.1.4",
+    "execa": "^9.6.0",
+    "hookable": "^5.5.3",
+    "pg": "^8.16.3",
+    "toml": "^3.0.0",
+    "zod": "^4.1.8"
+  }
+}
