@@ -35,7 +35,8 @@
     "build:types": "tsc -p tsconfig.build.json",
     "build:js": "bun run build.ts",
     "prebuild": "bun build:clean",
-    "build": "bun build:types && bun build:js"
+    "build": "bun build:types && bun build:js",
+    "dev": "bun run src/index.ts"
   },
   "peerDependencies": {
     "supabase": "^2.22.6"
