@@ -1,6 +1,5 @@
 import type { Config } from '@/types'
 
-import * as array from '@/utils/array'
 import { getDbUrlFromCli } from '@/lib/db'
 import { join } from 'node:path'
 import defu from 'defu'
@@ -35,22 +34,19 @@ export function readSecret(key: string) {
  * Load config from environment variables
  */
 export function loadConfigFromEnv(): Config {
-    return {
+    return defu({
         url: readSecret('SUPABASE_DB_URL'),
-        tables: array.fromString(readSecret('SUPABASE_TABLES')),
-        outputs: defaultConfig.outputs,
-    }
+        tables: readSecret('SUPABASE_TABLES').split(','),
+    }, defaultConfig)
 }
 
 /**
  * Load config from local supabase project
  */
 export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()): Promise<Config> {
-    return {
+    return defu({
         url: await getDbUrlFromCli(cwd),
-        tables: defaultConfig.tables,
-        outputs: defaultConfig.outputs,
-    }
+    }, defaultConfig)
 }
 
 /**
@@ -59,11 +55,9 @@ export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()):
  * bunx supabase status --json
  */
 export async function loadConfigFromSupabaseCli(cwd: string = process.cwd()): Promise<Config> {
-    return {
+    return defu({
         url: await getDbUrlFromCli(cwd),
-        tables: defaultConfig.tables,
-        outputs: defaultConfig.outputs,
-    }
+    }, defaultConfig)
 }
 
 /**
@@ -74,9 +68,8 @@ export async function loadConfigFromArgs(args: Record<string, string | number | 
     const supabaseCliConfig = await loadConfigFromSupabaseCli()
     const supabaseConfig = await loadConfigFromSupabaseConfig()
 
-    return defu(envConfig, supabaseCliConfig, supabaseConfig, {
-        ...(args['url'] ? { url: args['url'] } : {}),
-        ...(args['tables'] ? { tables: array.fromString(args['tables'] as string) } : {}),
-        // hooks are not available from args
-    })
+    return defu({
+        ...(args['url'] ? { url: args['url'] as string } : {}),
+        ...(args['tables'] ? { tables: args['tables'] as string[] } : {}),
+    }, envConfig, supabaseCliConfig, supabaseConfig)
 }

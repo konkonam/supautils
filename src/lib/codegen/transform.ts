@@ -1,5 +1,8 @@
 import type { TransformColumnPayload } from '@/types'
 
+/**
+ * Adds constraints to a column
+ */
 export function withConstraints(transformer: (payload: TransformColumnPayload) => string, payload: TransformColumnPayload) {
     let result = transformer(payload)
 
@@ -26,6 +29,9 @@ export function withConstraints(transformer: (payload: TransformColumnPayload) =
     return result
 }
 
+/**
+ * Transforms a column to a Zod type
+ */
 export function transformColumn(payload: TransformColumnPayload) {
     switch (payload.column.type) {
         case 'uuid':

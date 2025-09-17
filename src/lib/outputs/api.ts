@@ -1,13 +1,16 @@
 import type { ConfiguredOutput } from '@/types'
 
+import { toCamelCase } from '@/utils/string'
+
 export default {
     path: 'api.ts',
     imports: [
         'import * as schema from "./schema"',
-        'import { SupabaseError } from "@/lib/errors"',
     ],
     clear: true,
     transformers: {
+        'transform:tablename': name => toCamelCase(name),
+        'transform:columnname': name => toCamelCase(name),
         'transform:string': () => '',
         'transform:number': () => '',
         'transform:boolean': () => '',
@@ -19,20 +22,6 @@ export default {
         'transform:max': () => '',
         'transform:nullable': () => '',
         'transform:readonly': () => '',
-        'transform:table': payload => `
-        export const ${payload.table.name}Zod = schema.${payload.table.name}
-        export async function get${payload.table.name}(c) {
-            const supabase = c.get('supabase')
-            const user = c.get('user')
-
-            const { data, error } = await supabase
-                .from('${payload.table.name}')
-                .select('*')
-
-            if (error) throw new SupabaseError(error)
-
-            return c.json({ data })
-        }
-        `,
+        'transform:table': payload => `export const ${payload.table.name}Schema = schema.${payload.table.name}`,
     },
 } satisfies ConfiguredOutput

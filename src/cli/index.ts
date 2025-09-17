@@ -1,5 +1,9 @@
 import { defineCommand, runMain } from 'citty'
 
+import { consola } from 'consola'
+
+consola.wrapConsole()
+
 const main = defineCommand({
     meta: {
         name: 'supautils',

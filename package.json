@@ -9,13 +9,38 @@
     "url": "git+https://github.com/konkonam/supautils.git"
   },
   "homepage": "https://github.com/konkonam/supautils.git",
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/**/*.d.ts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./codegen": {
+      "import": "./dist/lib/codegen/index.js",
+      "types": "./dist/lib/codegen/index.d.ts"
+    },
+    "./db": {
+      "import": "./dist/lib/db/index.js",
+      "types": "./dist/lib/db/index.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/cli/index.js",
+      "types": "./dist/cli/index.d.ts"
+    },
+    "./outputs/api": {
+      "import": "./dist/lib/outputs/api.js",
+      "types": "./dist/lib/outputs/api.d.ts"
+    },
+    "./outputs/types": {
+      "import": "./dist/lib/outputs/types.js",
+      "types": "./dist/lib/outputs/types.d.ts"
+    },
+    "./outputs/zod": {
+      "import": "./dist/lib/outputs/zod.js",
+      "types": "./dist/lib/outputs/zod.d.ts"
     }
   },
-  "main": "./dist/index.mjs",
   "typesVersions": {
     "*": {
       ".": [

@@ -14,6 +14,8 @@ export const appHooks = createHooks<AppHooks>()
 
 // Register hooks provided via config
 export function registerHooks(config: Config) {
+    if (!config.hooks) return
+
     for (const event of Object.keys(config.hooks) as (keyof AppHooks)[]) {
         const handlers = config.hooks[event]
         if (!handlers) continue

@@ -11,6 +11,10 @@ export type TransformTablePayload = {
 }
 
 export type Transformers = {
+    // utils
+    'transform:tablename': (name: string) => string
+    'transform:columnname': (name: string) => string
+
     // types
     'transform:string': (payload: TransformColumnPayload) => string
     'transform:number': (payload: TransformColumnPayload) => string

@@ -28,7 +28,7 @@ import { generateOutputs, writeOutputs } from 'supautils'
 const outputs = await generateOutputs({
     url: 'postgres://user:pass@host:port/db',
     outputDir: './generated/cli',
-    schemas: ['public'],
+    tables: ['public.*'],
 })
 
 await writeOutputs(outputs)

@@ -2,7 +2,6 @@ import { loadConfigFromArgs } from '@/lib/config'
 import { generateOutputs, writeOutputs } from '@/lib/codegen'
 
 import { defineCommand } from 'citty'
-import defu from 'defu'
 
 export default defineCommand({
     meta: {
@@ -10,11 +9,11 @@ export default defineCommand({
         description: 'Generate Zod schemas from Supabase/Postgres',
     },
     args: {
-        schemas: {
+        tables: {
             type: 'string',
-            description: 'Schemas to generate',
-            valueHint: 'a,b,c...',
-            default: 'public',
+            description: 'Tables to generate',
+            valueHint: 'a.*|b.a,c.*...',
+            default: 'public.*',
         },
         url: {
             type: 'string',
@@ -23,12 +22,13 @@ export default defineCommand({
         },
     },
     async run({ args }) {
-        const config = await loadConfigFromArgs(defu(args, {
-            outputDir: './generated/cli',
-        }))
+        const config = await loadConfigFromArgs(args)
 
-        const outputs = await generateOutputs(config)
+        const outs = await generateOutputs(config).catch((e) => {
+            console.error(e)
+            return []
+        })
 
-        await writeOutputs(outputs)
+        writeOutputs(outs)
     },
 })

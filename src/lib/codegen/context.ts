@@ -23,37 +23,45 @@ export async function makeContext(
         hook: appHooks.hook,
     }
 
-    registerHooks(config)
+    context.config.tables = Array.from(new Set(context.config.tables))
 
-    const includes = string.processTables(config.tables)
+    registerHooks(context.config)
 
-    const tables = await meta.tables.list({
+    const includes = string.processTables(context.config.tables)
+
+    let tables = await meta.tables.list({
         includeColumns: true,
         includedSchemas: Object.keys(includes),
     }).then(({ data, error }) => {
-        if (error) throw error
+        if (error) console.error(error)
 
-        const tables = data ?? []
-
-        return tables.filter((t: PostgresTable) => {
-            const allowed = includes[t.schema]
-            if (allowed === undefined) return true
-            if (allowed && allowed.includes(t.name)) return true
-            return false
-        })
+        return data ?? []
     })
 
-    const checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
-        if (error) throw error
+    tables = tables.filter((t: PostgresTable) => {
+        const allowedTables = includes[t.schema]
+        if (allowedTables === null)
+            return true
+        else if (allowedTables && Array.isArray(allowedTables))
+            return allowedTables.includes(t.name)
 
-        const rows = (data ?? []) as PostgresCheck[]
+        return false
+    })
 
-        return rows.filter((t: PostgresCheck) => {
-            const allowed = includes[t.schema_name as keyof typeof includes]
-            if (allowed === undefined) return true
-            if (allowed && allowed.includes(t.table_name)) return true
-            return false
-        })
+    let checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
+        if (error) console.error(error)
+
+        return data ?? []
+    })
+
+    checks = checks.filter((t: PostgresCheck) => {
+        const allowedTables = includes[t.schema_name as keyof typeof includes]
+        if (allowedTables === null)
+            return true
+        else if (allowedTables && Array.isArray(allowedTables))
+            return allowedTables.includes(t.table_name)
+
+        return false
     })
 
     await appHooks.callHook('map:before', context)

@@ -15,6 +15,6 @@ await build({
     format: 'esm',
     // @ts-expect-error this is actually working
     splitting: true,
-    sourcemap: 'external',
-    minify: false,
+    sourcemap: 'linked',
+    minify: true,
 })

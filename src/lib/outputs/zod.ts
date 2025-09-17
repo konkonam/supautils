@@ -1,10 +1,14 @@
 import type { ConfiguredOutput } from '@/types'
 
+import { toCamelCase } from '@/utils/string'
+
 export default {
     path: 'schema.ts',
     clear: true,
     imports: ['import { z } from "zod"'],
     transformers: {
+        'transform:tablename': name => toCamelCase(name),
+        'transform:columnname': name => toCamelCase(name),
         'transform:string': payload => `${payload.column.name}: z.string()`,
         'transform:number': payload => `${payload.column.name}: z.number()`,
         'transform:boolean': payload => `${payload.column.name}: z.boolean()`,
