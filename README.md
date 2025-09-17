@@ -24,11 +24,37 @@ npx supautils gen:schemas
 
 ```ts
 import { generateOutputs, writeOutputs } from 'supautils'
+import { execa, ExecaError } from 'execa'
+import { basename } from 'node:path'
 
-const outputs = await generateOutputs({
-    url: 'postgres://user:pass@host:port/db',
-    outputDir: './generated/cli',
-    tables: ['public.*'],
+const outs = await generateOutputs({
+    url: 'postgres://postgres:postgres@localhost:54322/postgres',
+    tables: [
+        'public.*',
+        'auth.users',
+    ],
+    outputDir: './generated/lib',
+    hooks: {
+        'write:before': async () => {},
+        'write:after': async (output) => {
+            try {
+                await execa('bunx', [
+                    'eslint',
+                    '--fix',
+                    '--no-ignore',
+                    '--exit-on-fatal-error',
+                    output.path.replace(process.cwd(), '.'),
+                ])
+            }
+            catch (error) {
+                if (error instanceof ExecaError) {
+                    console.info('File', basename(output.path), 'contains linting errors')
+                }
+            }
+        },
+    },
+}).catch(() => {
+    return []
 })
 
-await writeOutputs(outputs)
+writeOutputs(outs)
