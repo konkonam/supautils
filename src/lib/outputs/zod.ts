@@ -15,7 +15,7 @@ export default {
         'transform:min': payload => `.min(${payload.column.min})`,
         'transform:max': payload => `.max(${payload.column.max})`,
         'transform:nullable': payload => payload.column.nullable ? `.nullable()` : '',
-        'transform:readonly': payload => payload.column.readonly ? `Readonly<${payload.current}>` : null,
+        'transform:readonly': payload => payload.column.readonly ? `.readonly()` : '',
         'transform:table': payload => `export const ${payload.table.name} = z.object({
             ${payload.columns},
         })`,
