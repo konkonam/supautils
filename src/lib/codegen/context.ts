@@ -12,6 +12,9 @@ export interface Context {
     hook: typeof appHooks['hook']
 }
 
+/**
+ * Creates a context from the given PostgresMeta and Config
+ */
 export async function makeContext(
     meta: PostgresMetaWithChecks,
     config: Config,
@@ -27,8 +30,10 @@ export async function makeContext(
 
     registerHooks(context.config)
 
+    // Process tables from the config to an easier format
     const includes = string.processTables(context.config.tables)
 
+    // Get database tables from pg
     let tables = await meta.tables.list({
         includeColumns: true,
         includedSchemas: Object.keys(includes),
@@ -38,6 +43,7 @@ export async function makeContext(
         return data ?? []
     })
 
+    // Filter tables based on config
     tables = tables.filter((t: PostgresTable) => {
         const allowedTables = includes[t.schema]
         if (allowedTables === null)
@@ -48,12 +54,14 @@ export async function makeContext(
         return false
     })
 
+    // Get database constraints(checks) from pg
     let checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
         if (error) console.error(error)
 
         return data ?? []
     })
 
+    // Filter checks based on config
     checks = checks.filter((t: PostgresCheck) => {
         const allowedTables = includes[t.schema_name as keyof typeof includes]
         if (allowedTables === null)

@@ -1,6 +1,11 @@
 import { build } from 'bun'
 
 await build({
+    outdir: './dist',
+    target: 'node',
+    format: 'esm',
+    minify: true,
+    sourcemap: 'linked',
     entrypoints: [
         './src/lib/codegen/index.ts',
         './src/lib/db/index.ts',
@@ -10,11 +15,17 @@ await build({
         './src/index.ts',
         './src/cli/index.ts',
     ],
-    outdir: './dist',
-    target: 'node',
-    format: 'esm',
+    external: [
+        '@supabase/postgres-meta',
+        'citty',
+        'consola',
+        'defu',
+        'execa',
+        'hookable',
+        'pg',
+        'toml',
+        'zod',
+    ],
     // @ts-expect-error this is actually working
     splitting: true,
-    sourcemap: 'linked',
-    minify: true,
 })

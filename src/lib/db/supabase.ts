@@ -1,6 +1,9 @@
 // @TODO: check gpt code
 import { execa } from 'execa'
 
+/**
+ * Typed "supabase status --json" service item
+ */
 interface Service {
     [key: string]: unknown
     url?: string
@@ -13,6 +16,9 @@ interface Service {
     dsn?: string
 }
 
+/**
+ * Typed "supabase status --json" output
+ */
 interface SupabaseStatus {
     [key: string]: unknown
     db?: { url?: string, connectionString?: string }
@@ -21,6 +27,12 @@ interface SupabaseStatus {
     services?: Record<string, Service>
 }
 
+/**
+ * Extracts the database url from the supabase cli status json
+ *
+ * @param json - Supabase status json
+ * @returns string | undefined
+ */
 function extractDbUrlFromStatusJson(json: unknown): string | undefined {
     if (!json || typeof json !== 'object') return undefined
     const j = json as SupabaseStatus
@@ -73,6 +85,12 @@ function extractDbUrlFromStatusJson(json: unknown): string | undefined {
     return chosen
 }
 
+/**
+ * Gets the database url from the supabase cli
+ *
+ * @param cwd - Current working directory
+ * @returns Promise<string | undefined>
+ */
 export async function getDbUrlFromCli(cwd: string = process.cwd()): Promise<string | undefined> {
     try {
         const result = await execa('supabase', ['status', '--json'], {

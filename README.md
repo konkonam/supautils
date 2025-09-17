@@ -8,7 +8,13 @@ npm i supautils -D
 
 ## Usage
 
-### CLI
+There are two ways to generate the schemas:
+
+### via CLI
+
+You can generate the schemas using the CLI:
+
+> Note: The CLI will try to automatically detect the database connection string
 
 ```bash
 npx supautils gen:schemas
@@ -20,12 +26,12 @@ npx supautils gen:schemas
 | `--url` | Database connection string | `DATABASE_URL` env variable |
 | `--schemas` | Schemas to generate | `public` |
 
-### Code
+### via Code
+
+You can also generate the schemas using code:
 
 ```ts
 import { generateOutputs, writeOutputs } from 'supautils'
-import { execa, ExecaError } from 'execa'
-import { basename } from 'node:path'
 
 const outs = await generateOutputs({
     url: 'postgres://postgres:postgres@localhost:54322/postgres',
@@ -35,26 +41,12 @@ const outs = await generateOutputs({
     ],
     outputDir: './generated/lib',
     hooks: {
-        'write:before': async () => {},
-        'write:after': async (output) => {
-            try {
-                await execa('bunx', [
-                    'eslint',
-                    '--fix',
-                    '--no-ignore',
-                    '--exit-on-fatal-error',
-                    output.path.replace(process.cwd(), '.'),
-                ])
-            }
-            catch (error) {
-                if (error instanceof ExecaError) {
-                    console.info('File', basename(output.path), 'contains linting errors')
-                }
-            }
-        },
+        'map:before': async (context) => {},
+        'map:after': async (context) => {},
+        'write:before': async (output) => {},
+        'write:after': async (output) => {},
     },
-}).catch(() => {
-    return []
-})
+}).catch(() => [])
 
 writeOutputs(outs)
+```

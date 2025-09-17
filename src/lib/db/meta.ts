@@ -8,8 +8,19 @@ type PostgresCheck = {
     column_name: string | null
 }
 
-// @TODO: make a contribution to @supabase/postgres-meta
+/**
+ * Extends PostgresMeta with constraints
+ *
+ * @TODO: make a contribution to @supabase/postgres-meta
+ */
 export class PostgresMetaWithChecks extends PostgresMeta {
+    /**
+     * Gets constraints(checks) from the database
+     *
+     * @param includedSchemas - Array of schemas to include
+     *
+     * @returns Promise<{ data: PostgresCheck[], error: unknown }>
+     */
     async checks(includedSchemas: string[]): Promise<{ data: PostgresCheck[], error: unknown }> {
         const schemaList = includedSchemas.map(s => `'${s}'`).join(', ')
 
@@ -27,7 +38,7 @@ export class PostgresMetaWithChecks extends PostgresMeta {
         ON tbl.relnamespace = nsp.oid
       LEFT JOIN pg_attribute col 
         ON col.attnum = ANY (con.conkey)
-       AND col.attrelid = tbl.oid
+        AND col.attrelid = tbl.oid
       WHERE con.contype = 'c'
         AND nsp.nspname IN (${schemaList});
     `

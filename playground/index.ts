@@ -1,7 +1,7 @@
 import { generateOutputs, writeOutputs } from 'supautils'
-import { execa, ExecaError } from 'execa'
 import { basename } from 'node:path'
 import { consola } from 'consola'
+import { execa } from 'execa'
 
 consola.wrapConsole()
 
@@ -13,6 +13,8 @@ const outs = await generateOutputs({
     ],
     outputDir: './generated/lib',
     hooks: {
+        'map:before': async () => {},
+        'map:after': async () => {},
         'write:before': async () => {},
         'write:after': async (output) => {
             try {
@@ -24,10 +26,8 @@ const outs = await generateOutputs({
                     output.path.replace(process.cwd(), '.'),
                 ])
             }
-            catch (error) {
-                if (error instanceof ExecaError) {
-                    console.info('File', basename(output.path), 'contains linting errors')
-                }
+            catch {
+                console.info('File', basename(output.path), 'contains linting errors')
             }
         },
     },

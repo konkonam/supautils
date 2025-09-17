@@ -10,7 +10,9 @@
   },
   "homepage": "https://github.com/konkonam/supautils.git",
   "main": "./dist/index.js",
-  "types": "./types/index.d.ts",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -52,8 +54,8 @@
     "supautils": "./bin/supautils"
   },
   "files": [
-    "dist",
-    "bin"
+    "bin",
+    "dist"
   ],
   "scripts": {
     "build:clean": "rm -rf dist",
@@ -61,13 +63,15 @@
     "build:js": "bun run build.ts",
     "prebuild": "bun build:clean",
     "build": "bun build:types && bun build:js",
-    "dev": "bun run src/index.ts"
+    "postbuild": "echo '📦 Bundle generated ('$(du -sh dist | cut -f1)')'",
+    "dev": "bun playground/index.ts"
   },
   "peerDependencies": {
     "supabase": "^2.22.6"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.9.0",
+    "@stacksjs/dtsx": "^0.9.5",
     "@types/bun": "^1.2.20",
     "eslint": "^9.34.0",
     "typescript": "^5.9.2",
