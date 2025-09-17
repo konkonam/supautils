@@ -1,7 +1,6 @@
 {
   "name": "supautils",
   "version": "1.0.1",
-  "private": true,
   "type": "module",
   "description": "supautils for supabase 🚀",
   "repository": {
@@ -64,7 +63,8 @@
     "prebuild": "bun build:clean",
     "build": "bun build:types && bun build:js",
     "postbuild": "echo '📦 Bundle generated ('$(du -sh dist | cut -f1)')'",
-    "dev": "bun playground/index.ts"
+    "dev": "bun playground/index.ts",
+    "lint": "eslint ."
   },
   "peerDependencies": {
     "supabase": "^2.22.6"
