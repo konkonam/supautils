@@ -14,8 +14,6 @@ npm i supautils -D
 npx supautils gen:schemas
 ```
 
-#### Options
-
 | Option | Description | Default |
 | --- | --- | --- |
 | `--out` or `--output` | Output file path | `./generated/cli` |
