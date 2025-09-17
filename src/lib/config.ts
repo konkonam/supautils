@@ -1,12 +1,13 @@
 import type { Config } from '@/types'
 
 import * as array from '@/utils/array'
-import { getDbUrlFromCli } from '@/lib/supabase'
+import { getDbUrlFromCli } from '@/lib/db'
 import { join } from 'node:path'
 import defu from 'defu'
 
-import zod from '@/lib/outputs/zod'
-import types from '@/lib/outputs/types'
+import zod from '@/outputs/zod'
+import types from '@/outputs/types'
+import api from '@/outputs/api'
 
 /**
  * Default config
@@ -15,7 +16,7 @@ export const defaultConfig: Config = {
     url: 'postgres://postgres:postgres@localhost:5432/postgres',
     tables: ['public.*'],
     outputDir: join(process.cwd(), './generated/lib'),
-    outputs: [zod, types],
+    outputs: [zod, types, api],
 }
 
 /**

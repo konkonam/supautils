@@ -1,5 +1,5 @@
 import { loadConfigFromArgs } from '@/lib/config'
-import { generateOutputs, writeOutputs } from '@/lib/generate'
+import { generateOutputs, writeOutputs } from '@/lib/codegen'
 
 import { defineCommand } from 'citty'
 import defu from 'defu'

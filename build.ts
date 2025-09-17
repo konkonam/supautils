@@ -2,6 +2,11 @@ import { build } from 'bun'
 
 await build({
     entrypoints: [
+        './src/lib/codegen/index.ts',
+        './src/lib/db/index.ts',
+        './src/lib/outputs/api.ts',
+        './src/lib/outputs/types.ts',
+        './src/lib/outputs/zod.ts',
         './src/index.ts',
         './src/cli/index.ts',
     ],

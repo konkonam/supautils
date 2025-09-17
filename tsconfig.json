@@ -15,7 +15,10 @@
             ],
             "@/types": [
                 "./types/index.d.ts",
-            ]
+            ],
+            "@/outputs/*": [
+                "./src/lib/outputs/*",
+            ],
         }
     }
 }

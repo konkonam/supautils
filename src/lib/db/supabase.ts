@@ -89,6 +89,6 @@ export async function getDbUrlFromCli(cwd: string = process.cwd()): Promise<stri
         }
     }
     catch {
-        // Ignore and fallback
+        console.error('Failed to get db url from cli')
     }
 }

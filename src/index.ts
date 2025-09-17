@@ -1,8 +1,6 @@
-import { execa } from 'execa'
-import { generateOutputs } from './lib/generate'
+import { generateOutputs, writeOutputs } from '@/lib/codegen'
 
-import zod from '@/lib/outputs/zod'
-import types from '@/lib/outputs/types'
+import { execa } from 'execa'
 
 // Example usage
 const outs = await generateOutputs({
@@ -15,13 +13,14 @@ const outs = await generateOutputs({
     hooks: {
         'write:after': async (output) => {
             console.log(`Running eslint on ${output.path}`)
-            await execa('bunx', ['eslint', output.path, '--fix']).catch(() => {})
+            await execa('bunx', ['eslint', output.path, '--fix'])
         },
     },
-    outputs: [zod, types],
 }).catch((e) => {
     console.error(e)
     return []
 })
 
-export { generateOutputs }
+writeOutputs(outs)
+
+export { generateOutputs, writeOutputs }

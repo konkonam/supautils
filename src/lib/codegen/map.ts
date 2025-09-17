@@ -1,5 +1,5 @@
-import type { PostgresColumn, PostgresTable, PostgresCheck, PostgresRelationship } from '@/lib/meta'
 import type { MappedColumn, MappedTable } from '@/types'
+import type { PostgresColumn, PostgresTable, PostgresCheck } from '@/lib/db'
 
 /**
  * Extracts the default value from a column

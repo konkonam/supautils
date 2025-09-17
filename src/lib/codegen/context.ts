@@ -1,7 +1,7 @@
-import type { PostgresMetaWithChecks, PostgresTable, PostgresCheck } from '@/lib/meta'
 import type { MappedTable, Config } from '@/types'
+import type { PostgresMetaWithChecks, PostgresTable, PostgresCheck } from '@/lib/db'
 
-import { mapTables } from '@/lib/map'
+import { mapTables } from '@/lib/codegen'
 import { appHooks, registerHooks } from '@/lib/hooks'
 import * as string from '@/utils/string'
 

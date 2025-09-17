@@ -1,5 +1,5 @@
 import type { Config, Output } from '@/types'
-import type { Context } from '@/lib/context'
+import type { Context } from '@/lib/codegen'
 
 import { createHooks } from 'hookable'
 

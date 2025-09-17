@@ -1,7 +1,7 @@
 import type { ConfiguredOutput } from '@/types'
 
 export default {
-    path: 'zod.ts',
+    path: 'schema.ts',
     clear: true,
     imports: ['import { z } from "zod"'],
     transformers: {
