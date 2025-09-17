@@ -1,12 +1,14 @@
-import { type PostgresColumn, type PostgresTable, PostgresMeta } from '@supabase/postgres-meta'
+import { type PostgresColumn, type PostgresTable, type PostgresRelationship, PostgresMeta } from '@supabase/postgres-meta'
 
 type PostgresCheck = {
     constraint_name: string
     definition: string
+    schema_name: string
     table_name: string
     column_name: string | null
 }
 
+// @TODO: make a contribution to @supabase/postgres-meta
 export class PostgresMetaWithChecks extends PostgresMeta {
     async checks(includedSchemas: string[]): Promise<{ data: PostgresCheck[], error: unknown }> {
         const schemaList = includedSchemas.map(s => `'${s}'`).join(', ')
@@ -34,4 +36,4 @@ export class PostgresMetaWithChecks extends PostgresMeta {
     }
 }
 
-export type { PostgresColumn, PostgresTable, PostgresMeta, PostgresCheck }
+export type { PostgresColumn, PostgresTable, PostgresMeta, PostgresCheck, PostgresRelationship }

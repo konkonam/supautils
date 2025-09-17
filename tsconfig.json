@@ -1,17 +1,20 @@
 {
     "exclude": [
         "node_modules",
+        "playground",
         "dist",
     ],
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
-        "moduleResolution": "bundler",
+        "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./src/*",
-                "./types/*"
+            ],
+            "@/types": [
+                "./types/index.d.ts",
             ]
         }
     }

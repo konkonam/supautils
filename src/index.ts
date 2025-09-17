@@ -1,22 +1,27 @@
-import * as fs from 'node:fs/promises'
-import * as path from 'node:path'
+import { execa } from 'execa'
 import { generateOutputs } from './lib/generate'
 
 import zod from '@/lib/outputs/zod'
+import types from '@/lib/outputs/types'
 
 // Example usage
 const outs = await generateOutputs({
     url: 'postgres://postgres:postgres@localhost:54322/postgres',
-    tables: ['public.*'],
-    outputs: [zod],
+    tables: [
+        'public.*',
+        'auth.users',
+    ],
+    outputDir: './generated/lib',
+    hooks: {
+        'write:after': async (output) => {
+            console.log(`Running eslint on ${output.path}`)
+            await execa('bunx', ['eslint', output.path, '--fix']).catch(() => {})
+        },
+    },
+    outputs: [zod, types],
 }).catch((e) => {
     console.error(e)
+    return []
 })
-
-const outPath = path.resolve(process.cwd(), 'schemas.ts')
-await fs.mkdir(path.dirname(outPath), { recursive: true })
-await fs.writeFile(outPath, outs[0].content, 'utf8')
-
-console.log(`Wrote ${outPath}`)
 
 export { generateOutputs }

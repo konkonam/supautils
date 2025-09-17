@@ -13,5 +13,5 @@ const main = defineCommand({
 
 export default main
 
-// Execute when called directly
+// when called directly
 runMain(main)

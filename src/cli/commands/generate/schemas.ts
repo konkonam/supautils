@@ -1,10 +1,8 @@
-import * as fs from 'node:fs/promises'
-import * as path from 'node:path'
-import { defineCommand } from 'citty'
-import consola from 'consola'
-
 import { loadConfigFromArgs } from '@/lib/config'
-import { generateOutputs } from '@/lib/generate'
+import { generateOutputs, writeOutputs } from '@/lib/generate'
+
+import { defineCommand } from 'citty'
+import defu from 'defu'
 
 export default defineCommand({
     meta: {
@@ -25,17 +23,12 @@ export default defineCommand({
         },
     },
     async run({ args }) {
-        const config = await loadConfigFromArgs({
-            url: args.url,
-            schemas: args.schemas,
-        })
+        const config = await loadConfigFromArgs(defu(args, {
+            outputDir: './generated/cli',
+        }))
 
         const outputs = await generateOutputs(config)
 
-        const outPath = path.resolve(process.cwd(), String(args.out))
-        await fs.mkdir(path.dirname(outPath), { recursive: true })
-        await fs.writeFile(outPath, outputs[0].content, 'utf8')
-
-        consola.success(`Wrote ${outPath}`)
+        await writeOutputs(outputs)
     },
 })

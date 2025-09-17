@@ -1,8 +1,9 @@
-import type { PostgresMetaWithChecks } from '@/lib/meta'
-import type { Config } from '@/lib/config'
+import type { PostgresMetaWithChecks, PostgresTable, PostgresCheck } from '@/lib/meta'
+import type { MappedTable, Config } from '@/types'
 
-import { mapTables, type MappedTable } from '@/lib/map'
-import { appHooks } from '@/lib/hooks'
+import { mapTables } from '@/lib/map'
+import { appHooks, registerHooks } from '@/lib/hooks'
+import * as string from '@/utils/string'
 
 export interface Context {
     meta: PostgresMetaWithChecks
@@ -19,25 +20,45 @@ export async function makeContext(
         meta,
         config,
         tables: [],
-        hook: appHooks.hook.bind(appHooks),
+        hook: appHooks.hook,
     }
+
+    registerHooks(config)
+
+    const includes = string.processTables(config.tables)
 
     const tables = await meta.tables.list({
         includeColumns: true,
-        includedSchemas: config.schemas,
+        includedSchemas: Object.keys(includes),
     }).then(({ data, error }) => {
         if (error) throw error
 
-        return data ?? []
+        const tables = data ?? []
+
+        return tables.filter((t: PostgresTable) => {
+            const allowed = includes[t.schema]
+            if (allowed === undefined) return true
+            if (allowed && allowed.includes(t.name)) return true
+            return false
+        })
     })
 
-    const checks = await meta.checks(config.schemas).then(({ data, error }) => {
+    const checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
         if (error) throw error
 
-        return data ?? []
+        const rows = (data ?? []) as PostgresCheck[]
+
+        return rows.filter((t: PostgresCheck) => {
+            const allowed = includes[t.schema_name as keyof typeof includes]
+            if (allowed === undefined) return true
+            if (allowed && allowed.includes(t.table_name)) return true
+            return false
+        })
     })
 
+    await appHooks.callHook('map:before', context)
     context.tables = mapTables(tables, checks)
+    await appHooks.callHook('map:after', context)
 
     return context
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // ESM wrapper to execute the built CLI
-// The built CLI (dist/cli.mjs) calls runMain when imported.
-const cliUrl = new URL('../dist/cli.mjs', import.meta.url)
+// The built CLI (dist/cli/index.js) calls runMain when imported.
+const cliUrl = new URL('../dist/cli/index.js', import.meta.url)
 
 import(cliUrl.href).catch((err) => {
     console.error(err)

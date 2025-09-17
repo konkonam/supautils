@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Supa utilities for supabase 🚀",
+  "description": "supautils for supabase 🚀",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/konkonam/supautils.git"
@@ -31,7 +31,11 @@
     "bin"
   ],
   "scripts": {
-    "build": "unbuild"
+    "build:clean": "rm -rf dist",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build:js": "bun run build.ts",
+    "prebuild": "bun build:clean",
+    "build": "bun build:types && bun build:js"
   },
   "peerDependencies": {
     "supabase": "^2.22.6"

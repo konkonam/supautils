@@ -1,19 +1,5 @@
-import type { PostgresColumn, PostgresTable, PostgresCheck } from '@/lib/meta'
-
-export type MappedColumn = {
-    name: string
-    type: string
-    min?: string
-    max?: string
-    nullable: boolean
-    default?: string
-}
-
-export type MappedTable = {
-    name: string
-    columns: MappedColumn[]
-    dependencies: string[]
-}
+import type { PostgresColumn, PostgresTable, PostgresCheck, PostgresRelationship } from '@/lib/meta'
+import type { MappedColumn, MappedTable } from '@/types'
 
 /**
  * Extracts the default value from a column
@@ -53,6 +39,14 @@ export function extractMax(column: PostgresColumn, checks: PostgresCheck[]) {
     }
 }
 
+export function extractNullable(column: PostgresColumn) {
+    return column.is_nullable
+}
+
+export function extractReadOnly(column: PostgresColumn) {
+    return column.is_generated || column.is_identity
+}
+
 /**
  * Extracts the dependencies from a table
  */
@@ -63,8 +57,6 @@ export function extractTableDependencies(table: PostgresTable) {
         dependencies.push(target_table_name)
     })
 
-    console.log(dependencies)
-
     return dependencies
 }
 
@@ -74,28 +66,27 @@ export function extractTableDependencies(table: PostgresTable) {
 export function mapColumn(column: PostgresColumn, tableChecks: PostgresCheck[]): MappedColumn {
     const checks = tableChecks.filter(check => check.column_name === column.name)
 
-    const defaultValue = extractDefault(column)
-    const min = extractMin(column, checks)
-    const max = extractMax(column, checks)
-
-    return {
+    const result = {
         name: column.name,
         type: column.data_type,
-        nullable: column.is_nullable,
-        default: defaultValue,
-        min,
-        max,
+        nullable: extractNullable(column),
+        readonly: extractReadOnly(column),
+        default: extractDefault(column),
+        min: extractMin(column, checks),
+        max: extractMax(column, checks),
     }
+
+    return result
 }
 
 /**
  * Converts PostgresTable to MappedTable
  */
-export function mapTable(table: PostgresTable, allChecks: PostgresCheck[]) {
-    const checks = allChecks.filter(check => check.table_name === table.name)
+export function mapTable(table: PostgresTable, allChecks: PostgresCheck[] | undefined) {
+    const checks = allChecks?.filter(check => check.table_name === table.name)
     const columns = table.columns.map(column => mapColumn(column, checks))
 
-    const dependencies = extractTableDependencies(columns)
+    const dependencies = extractTableDependencies(table)
 
     return {
         name: table.name,

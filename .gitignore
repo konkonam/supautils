@@ -1,6 +1,7 @@
 # dev/build outputs
 dist
 coverage
+generated
 .output
 .data
 .nuxt
