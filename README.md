@@ -16,9 +16,11 @@ npx supautils gen:schemas
 
 #### Options
 
-- `--out` or `--output`: Output file path
-- `--url`: Database connection string
-- `--schemas`: Schemas to generate
+| Option | Description | Default |
+| --- | --- | --- |
+| `--out` or `--output` | Output file path | `./generated/cli` |
+| `--url` | Database connection string | `DATABASE_URL` env variable |
+| `--schemas` | Schemas to generate | `public` |
 
 ### Code
 
