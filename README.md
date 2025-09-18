@@ -1,4 +1,4 @@
-Utilities i commonly need for supabase projects to help me build saas products faster
+Utilities to generate Zod schemas from Supabase/Postgres
 
 ## Installation
 
@@ -8,7 +8,7 @@ npm i supautils -D
 
 ## Usage
 
-There are two ways to generate the schemas:
+Currently the package only offers codegen functionality.
 
 ### via CLI
 
@@ -31,10 +31,10 @@ npx supautils gen:schemas
 You can also generate the schemas using code:
 
 ```ts
-import { generateOutputs, writeOutputs } from 'supautils'
+import { generateOutputs, writeOutputs } from 'supautils/codegen'
 
 const outs = await generateOutputs({
-    url: 'postgres://postgres:postgres@localhost:54322/postgres',
+    url: 'postgresql://postgres:postgres@localhost:54322/postgres',
     tables: [
         'public.*',
         'auth.users',

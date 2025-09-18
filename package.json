@@ -1,6 +1,6 @@
 {
   "name": "supautils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "Utilities to generate Zod schemas from Supabase/Postgres",
   "repository": {

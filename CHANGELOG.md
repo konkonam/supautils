@@ -1,3 +1,6 @@
+# 1.0.3
+- updated readme
+
 # 1.0.2
 - Fixed CLI arguments parsing
 - Fixed output file name
