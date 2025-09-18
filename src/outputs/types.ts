@@ -5,7 +5,7 @@ const output: ConfiguredOutput = {
     path: 'types.d.ts',
     clear: true,
     imports: [
-        'import * as schema from "./schema"',
+        'import * as schemas from "./schemas"',
         'import type { z } from "zod"',
     ],
     transformers: {
@@ -22,7 +22,7 @@ const output: ConfiguredOutput = {
         'transform:max': () => '',
         'transform:nullable': () => '',
         'transform:readonly': () => '',
-        'transform:table': payload => `export type ${payload.table.name} = z.infer<typeof schema.${decapitalize(payload.table.name)}>`,
+        'transform:table': payload => `export type ${payload.table.name} = z.infer<typeof schemas.${decapitalize(payload.table.name)}>`,
     },
 }
 

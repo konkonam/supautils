@@ -35,4 +35,4 @@ const outs = await generateOutputs({
     return []
 })
 
-writeOutputs(outs)
+await writeOutputs(outs)

@@ -15,7 +15,11 @@ export interface Context {
 /**
  * Filters tables based on the included tables from the config
  */
-export const filterTables = (allowed: string[] | null, name: string): boolean => (allowed !== null) && ((allowed && Array.isArray(allowed)) && allowed.includes(name))
+export const filterTables = (allowed: string[] | null, name: string): boolean => {
+    if (allowed === null) return true
+    if (!Array.isArray(allowed)) return false
+    return allowed.includes(name)
+}
 
 /**
  * Creates a context from the given PostgresMeta and Config
