@@ -7,12 +7,18 @@
         "module": "ESNext",
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
+
         "declaration": true,
         "isolatedDeclarations": true,
         "emitDeclarationOnly": true,
         "declarationMap": false,
+
         "skipLibCheck": true,
         "stripInternal": true,
+
+        "resolvePackageJsonExports": true,
+        "resolvePackageJsonImports": true,
+
         "paths": {
             "@/*": [
                 "./src/*",
