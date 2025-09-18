@@ -1,82 +1,50 @@
 import type { Config } from '@/types'
 
-import { getDbUrlFromCli } from '@/lib/db'
-import { join } from 'node:path'
-import defu from 'defu'
-
-import zod from '@/outputs/zod'
-import types from '@/outputs/types'
-import api from '@/outputs/api'
+import { zod, types, api } from '@/outputs'
 
 /**
  * Default config
  */
 export const defaultConfig: Config = {
-    url: 'postgres://postgres:postgres@localhost:5432/postgres',
+    url: 'postgresql://postgres:postgres@localhost:54322/postgres',
     tables: ['public.*'],
-    outputDir: join(process.cwd(), './generated/lib'),
+    outputDir: './generated/lib',
     outputs: [zod, types, api],
-}
-
-/**
- * Read a secret from env or return undefined
- */
-export function readSecret(key: string) {
-    const value = process.env[key]
-    if (!value) {
-        return undefined
-    }
-
-    return value
 }
 
 /**
  * Load config from environment variables
  */
 export function loadConfigFromEnv(): Config {
-    const url = readSecret('SUPABASE_DB_URL')
-    const tables = readSecret('SUPABASE_TABLES')?.split(',')
+    const url = process.env['SUPABASE_DB_URL']
+    const tables = process.env['SUPABASE_TABLES']?.split(',')
 
-    return defu({
-        ...(url ? { url } : {}),
-        ...(tables ? { tables } : {}),
-    }, defaultConfig)
+    return {
+        ...defaultConfig,
+        url,
+        tables,
+    }
 }
 
 /**
- * Load config from local supabase project
+ * Load config from execa args
  */
-export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()): Promise<Config> {
-    const url = await getDbUrlFromCli(cwd)
-
-    return defu({
-        ...(url ? { url } : {}),
-    }, defaultConfig)
-}
-
-/**
- * Load config from supabase cli
- *
- * bunx supabase status --json
- */
-export async function loadConfigFromSupabaseCli(cwd: string = process.cwd()): Promise<Config> {
-    const url = await getDbUrlFromCli(cwd)
-
-    return defu({
-        ...(url ? { url } : {}),
-    }, defaultConfig)
-}
-
-/**
- * Load config from args
- */
-export async function loadConfigFromArgs(args: Record<string, string | number | boolean | string[] | number[] | boolean[]>): Promise<Config> {
+export async function loadConfigFromArgs(args: Record<string, unknown>): Promise<Config> {
     const envConfig = loadConfigFromEnv()
-    const supabaseCliConfig = await loadConfigFromSupabaseCli()
-    const supabaseConfig = await loadConfigFromSupabaseConfig()
 
-    return defu({
-        ...(args['url'] ? { url: args['url'] as string } : {}),
-        ...(args['tables'] ? { tables: args['tables'] as string[] } : {}),
-    }, envConfig, supabaseCliConfig, supabaseConfig)
+    const url = String(args['url'] ?? envConfig.url)
+    const tables = String(args['tables'] ?? envConfig.tables).split(',')
+    const outputDir = String(args['outputDir'] ?? envConfig.outputDir)
+
+    const config = {
+        ...defaultConfig,
+        url,
+        tables,
+        outputDir,
+    }
+
+    // Deduplicates tables
+    config.tables = Array.from(new Set(config.tables))
+
+    return config
 }

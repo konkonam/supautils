@@ -8,8 +8,8 @@ export function pickFirst<T = string>(...vals: Array<T | undefined | null>): T |
     }
 }
 
-export function fromString<T extends string>(str: string) {
-    const arr = str.split(',').map(s => s.trim()).filter(Boolean) as T[]
+export function fromString(str: string): string[] | undefined {
+    const arr = str.split(',').map(s => s.trim()).filter(Boolean)
     if (arr.length === 0) return
 
     return arr

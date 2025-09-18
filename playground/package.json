@@ -1,9 +1,13 @@
 {
     "type": "module",
     "scripts": {
-        "gen": "supautils gen schemas --out ./.sutils/schemas.ts"
+        "lint:fix": "bunx eslint --fix --no-ignore ./generated",
+        "gen": "supautils gen:schemas --url=postgresql://postgres:postgres@localhost:54322/postgres --tables=public.* --outputDir=./generated/cli && bun lint:fix",
+        "gen:dev": "supautils gen:schemas --url=postgresql://postgres:postgres@localhost:54322/postgres --tables=public.* --outputDir=./generated/cli && bun lint:fix",
+        "gen:lib": "bun index.ts"
     },
     "dependencies": {
-        "supabase": "^2.22.6"
+        "supabase": "^2.22.6",
+        "supautils": "link:supautils"
     }
 }

@@ -1,15 +1,15 @@
 import type { ConfiguredOutput } from '@/types'
-import { toPascalCase, toCamelCase, decapitalize } from '@/utils/string'
 
-export default {
-    path: 'types.d.ts',
-    clear: true,
+import { decapitalize, toCamelCase } from '@/utils/string'
+
+const output: ConfiguredOutput = {
+    path: 'api.ts',
     imports: [
         'import * as schema from "./schema"',
-        'import type { z } from "zod"',
     ],
+    clear: true,
     transformers: {
-        'transform:tablename': name => toPascalCase(name),
+        'transform:tablename': name => toCamelCase(name),
         'transform:columnname': name => toCamelCase(name),
         'transform:string': () => '',
         'transform:number': () => '',
@@ -22,6 +22,8 @@ export default {
         'transform:max': () => '',
         'transform:nullable': () => '',
         'transform:readonly': () => '',
-        'transform:table': payload => `export type ${payload.table.name} = z.infer<typeof schema.${decapitalize(payload.table.name)}>`,
+        'transform:table': payload => `export const ${payload.table.name}Schema = schema.${decapitalize(payload.table.name)}`,
     },
-} satisfies ConfiguredOutput
+}
+
+export default output

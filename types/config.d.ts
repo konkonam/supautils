@@ -11,9 +11,11 @@ export type ConfiguredOutput = {
 export type Config = {
     url: string
     tables: string[]
+    excludedColumns?: string[]
+    readonlyColumns?: string[]
     outputDir?: string
+    outputs: ConfiguredOutput[]
     hooks?: Partial<{
         [K in keyof AppHooks]: AppHooks[K] | AppHooks[K][]
     }>
-    outputs: ConfiguredOutput[]
 }

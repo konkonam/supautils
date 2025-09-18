@@ -1,4 +1,4 @@
-import { generateOutputs, writeOutputs } from 'supautils'
+import { generateOutputs, writeOutputs } from 'supautils/codegen'
 import { basename } from 'node:path'
 import { consola } from 'consola'
 import { execa } from 'execa'
@@ -11,7 +11,7 @@ const outs = await generateOutputs({
         'public.*',
         'auth.users',
     ],
-    outputDir: './generated/lib',
+    outputDir: './generated/cli',
     hooks: {
         'map:before': async () => {},
         'map:after': async () => {},

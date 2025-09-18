@@ -1,5 +1,6 @@
 import type { Config, Output } from '@/types'
 import type { Context } from '@/lib/codegen'
+import type { Hookable } from 'hookable'
 
 import { createHooks } from 'hookable'
 
@@ -10,10 +11,10 @@ export type AppHooks = {
     'write:after': (output: Output) => void
 }
 
-export const appHooks = createHooks<AppHooks>()
+export const appHooks: Hookable<AppHooks> = createHooks<AppHooks>()
 
 // Register hooks provided via config
-export function registerHooks(config: Config) {
+export function registerHooks(config: Config): void {
     if (!config.hooks) return
 
     for (const event of Object.keys(config.hooks) as (keyof AppHooks)[]) {

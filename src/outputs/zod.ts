@@ -2,8 +2,8 @@ import type { ConfiguredOutput } from '@/types'
 
 import { toCamelCase } from '@/utils/string'
 
-export default {
-    path: 'schema.ts',
+const output: ConfiguredOutput = {
+    path: 'schemas.ts',
     clear: true,
     imports: ['import { z } from "zod"'],
     transformers: {
@@ -20,8 +20,11 @@ export default {
         'transform:max': payload => `.max(${payload.column.max})`,
         'transform:nullable': payload => payload.column.nullable ? `.nullable()` : '',
         'transform:readonly': payload => payload.column.readonly ? `.readonly()` : '',
-        'transform:table': payload => `export const ${payload.table.name} = z.object({
+        'transform:table': payload => `
+        export const ${payload.table.name} = z.object({
             ${payload.columns},
         })`,
     },
-} satisfies ConfiguredOutput
+}
+
+export default output

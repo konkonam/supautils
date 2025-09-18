@@ -1,14 +1,18 @@
 {
-    "exclude": [
-        "node_modules",
-        "playground",
-        "dist",
-    ],
     "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": "./src",
+        "outDir": "./dist",
         "target": "ESNext",
         "module": "ESNext",
-        "moduleResolution": "node",
-        "baseUrl": ".",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "declaration": true,
+        "isolatedDeclarations": true,
+        "emitDeclarationOnly": true,
+        "declarationMap": false,
+        "skipLibCheck": true,
+        "stripInternal": true,
         "paths": {
             "@/*": [
                 "./src/*",
@@ -17,8 +21,14 @@
                 "./types/index.d.ts",
             ],
             "@/outputs/*": [
-                "./src/lib/outputs/*",
+                "./src/outputs/*",
             ],
         }
-    }
+    },
+    "include": ["src", "types"],
+    "exclude": [
+        "node_modules",
+        "playground",
+        "dist",
+    ]
 }

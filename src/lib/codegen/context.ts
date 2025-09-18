@@ -1,5 +1,5 @@
 import type { MappedTable, Config } from '@/types'
-import type { PostgresMetaWithChecks, PostgresTable, PostgresCheck } from '@/lib/db'
+import type { PostgresMetaWithChecks } from '@/lib/meta'
 
 import { mapTables } from '@/lib/codegen'
 import { appHooks, registerHooks } from '@/lib/hooks'
@@ -11,6 +11,11 @@ export interface Context {
     tables: MappedTable[]
     hook: typeof appHooks['hook']
 }
+
+/**
+ * Filters tables based on the included tables from the config
+ */
+export const filterTables = (allowed: string[] | null, name: string): boolean => (allowed !== null) && ((allowed && Array.isArray(allowed)) && allowed.includes(name))
 
 /**
  * Creates a context from the given PostgresMeta and Config
@@ -34,42 +39,26 @@ export async function makeContext(
     const includes = string.processTables(context.config.tables)
 
     // Get database tables from pg
-    let tables = await meta.tables.list({
+    const tables = await meta.tables.list({
         includeColumns: true,
         includedSchemas: Object.keys(includes),
     }).then(({ data, error }) => {
         if (error) console.error(error)
 
-        return data ?? []
-    })
-
-    // Filter tables based on config
-    tables = tables.filter((t: PostgresTable) => {
-        const allowedTables = includes[t.schema]
-        if (allowedTables === null)
-            return true
-        else if (allowedTables && Array.isArray(allowedTables))
-            return allowedTables.includes(t.name)
-
-        return false
+        return data?.filter(t => filterTables(includes[t.schema], t.name)) ?? []
+    }).catch((e) => {
+        console.error(e)
+        return []
     })
 
     // Get database constraints(checks) from pg
-    let checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
+    const checks = await meta.checks(Object.keys(includes)).then(({ data, error }) => {
         if (error) console.error(error)
 
-        return data ?? []
-    })
-
-    // Filter checks based on config
-    checks = checks.filter((t: PostgresCheck) => {
-        const allowedTables = includes[t.schema_name as keyof typeof includes]
-        if (allowedTables === null)
-            return true
-        else if (allowedTables && Array.isArray(allowedTables))
-            return allowedTables.includes(t.table_name)
-
-        return false
+        return data?.filter(t => filterTables(includes[t.schema_name], t.table_name)) ?? []
+    }).catch((e) => {
+        console.error(e)
+        return []
     })
 
     await appHooks.callHook('map:before', context)

@@ -2,20 +2,24 @@ import type { Config, Output } from '@/types'
 
 import { defaultConfig } from '@/lib/config'
 import { makeContext, transformColumn } from '@/lib/codegen'
-import { PostgresMetaWithChecks } from '@/lib/db'
+import { PostgresMetaWithChecks } from '@/lib/meta'
 import { appHooks } from '@/lib/hooks'
 
 import { dirname, join } from 'node:path'
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import defu from 'defu'
 
 /**
  * Generates outputs based on the provided config
  */
-export async function generateOutputs(config: Partial<Config> = defaultConfig) {
-    const mergedConfig = defu(config, defaultConfig)
+export async function generateOutputs(config: Partial<Config>): Promise<Output[]> {
+    const mergedConfig = {
+        ...defaultConfig,
+        ...config,
+    }
+
     const meta = new PostgresMetaWithChecks({ connectionString: mergedConfig.url })
+
     const context = await makeContext(meta, mergedConfig)
     const outputs: Output[] = []
 
@@ -25,21 +29,21 @@ export async function generateOutputs(config: Partial<Config> = defaultConfig) {
 
         // Add imports if configured in output
         if (configuredOutput.imports) {
-            content += configuredOutput.imports.join('\n') + '\n'
+            content += configuredOutput.imports.join('\n')
+            content += '\n\n'
         }
 
         for (const table of context.tables) {
-            // Iterate over columns and transform them to one big string
+            table.name = configuredOutput.transformers['transform:tablename'](table.name)
+
+            // Iterate over columns and transform them into one big string
             const columns = table.columns.map((column) => {
                 column.name = configuredOutput.transformers['transform:columnname'](column.name)
-
                 return transformColumn({
                     column,
                     transformers: configuredOutput.transformers,
                 })
             }).join(',\n')
-
-            table.name = configuredOutput.transformers['transform:tablename'](table.name)
 
             // Transform table to string using configured transformers
             const result = configuredOutput.transformers['transform:table']({
@@ -66,7 +70,7 @@ export async function generateOutputs(config: Partial<Config> = defaultConfig) {
 /**
  * Utility to write outputs to the file system
  */
-export async function writeOutputs(outputs: Output[]) {
+export async function writeOutputs(outputs: Output[]): Promise<void> {
     for (const output of outputs) {
         await appHooks.callHook('write:before', output)
 

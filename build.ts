@@ -8,12 +8,9 @@ await build({
     sourcemap: 'linked',
     entrypoints: [
         './src/lib/codegen/index.ts',
-        './src/lib/db/index.ts',
-        './src/lib/outputs/api.ts',
-        './src/lib/outputs/types.ts',
-        './src/lib/outputs/zod.ts',
-        './src/index.ts',
+        './src/outputs/index.ts',
         './src/cli/index.ts',
+        './src/index.ts',
     ],
     external: [
         '@supabase/postgres-meta',

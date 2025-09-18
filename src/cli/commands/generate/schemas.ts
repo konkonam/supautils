@@ -1,9 +1,10 @@
 import { loadConfigFromArgs } from '@/lib/config'
 import { generateOutputs, writeOutputs } from '@/lib/codegen'
 
+import type { CommandDef } from 'citty'
 import { defineCommand } from 'citty'
 
-export default defineCommand({
+const command: CommandDef = defineCommand({
     meta: {
         name: 'gen:schemas',
         description: 'Generate Zod schemas from Supabase/Postgres',
@@ -19,6 +20,13 @@ export default defineCommand({
             type: 'string',
             description: 'Database connection string to override auto-detection',
             valueHint: 'postgres://...',
+            default: 'postgres://postgres:postgres@localhost:54322/postgres',
+        },
+        outputDir: {
+            type: 'string',
+            description: 'Output directory for generated files',
+            valueHint: 'path/to/output',
+            default: './generated',
         },
     },
     async run({ args }) {
@@ -32,3 +40,5 @@ export default defineCommand({
         writeOutputs(outs)
     },
 })
+
+export default command

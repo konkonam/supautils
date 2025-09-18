@@ -1,7 +1,3 @@
-import { generateOutputs, writeOutputs } from '@/lib/codegen'
-
-import { consola } from 'consola'
-
-consola.wrapConsole()
-
-export { generateOutputs, writeOutputs }
+export * from './lib/config'
+export * from './lib/hooks'
+export * from './lib/meta'

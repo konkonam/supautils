@@ -1,8 +1,8 @@
 {
   "name": "supautils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
-  "description": "supautils for supabase 🚀",
+  "description": "Utilities to generate Zod schemas from Supabase/Postgres",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/konkonam/supautils.git"
@@ -13,33 +13,21 @@
   "types": "./dist/index.d.ts",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "./cli": {
+      "import": "./dist/cli/index.js",
+      "types": "./dist/cli/index.d.ts"
     },
     "./codegen": {
       "import": "./dist/lib/codegen/index.js",
       "types": "./dist/lib/codegen/index.d.ts"
     },
-    "./db": {
-      "import": "./dist/lib/db/index.js",
-      "types": "./dist/lib/db/index.d.ts"
+    "./outputs": {
+      "import": "./dist/outputs/index.js",
+      "types": "./dist/outputs/index.d.ts"
     },
-    "./cli": {
-      "import": "./dist/cli/index.js",
-      "types": "./dist/cli/index.d.ts"
-    },
-    "./outputs/api": {
-      "import": "./dist/lib/outputs/api.js",
-      "types": "./dist/lib/outputs/api.d.ts"
-    },
-    "./outputs/types": {
-      "import": "./dist/lib/outputs/types.js",
-      "types": "./dist/lib/outputs/types.d.ts"
-    },
-    "./outputs/zod": {
-      "import": "./dist/lib/outputs/zod.js",
-      "types": "./dist/lib/outputs/zod.d.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "typesVersions": {
@@ -59,7 +47,7 @@
   "scripts": {
     "eco:bundlesize": "echo '📦 Bundle generated ('$(du -sh dist | cut -f1)')'",
     "build:clean": "rm -rf dist",
-    "build:types": "tsc -p tsconfig.build.json",
+    "build:types": "tsc",
     "build:js": "bun run build.ts",
     "prebuild": "bun build:clean",
     "build": "bun build:types && bun build:js",

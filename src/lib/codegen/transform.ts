@@ -3,77 +3,59 @@ import type { TransformColumnPayload } from '@/types'
 /**
  * Adds constraints to a column
  */
-export function withConstraints(transformer: (payload: TransformColumnPayload) => string, payload: TransformColumnPayload) {
-    let result = transformer(payload)
-
-    if (payload.column.default) {
-        result += payload.transformers['transform:default'](payload)
-    }
-
+export function addConstraints(value: string, payload: TransformColumnPayload): string {
     if (payload.column.readonly) {
-        result += payload.transformers['transform:readonly'](payload)
+        value += payload.transformers['transform:readonly'](payload)
     }
 
     if (payload.column.min) {
-        result += payload.transformers['transform:min'](payload)
+        value += payload.transformers['transform:min'](payload)
     }
 
     if (payload.column.max) {
-        result += payload.transformers['transform:max'](payload)
+        value += payload.transformers['transform:max'](payload)
     }
 
     if (payload.column.nullable) {
-        result += payload.transformers['transform:nullable'](payload)
+        value += payload.transformers['transform:nullable'](payload)
     }
 
-    return result
+    return value
 }
 
 /**
  * Transforms a column to a Zod type
  */
-export function transformColumn(payload: TransformColumnPayload) {
+export function transformColumn(payload: TransformColumnPayload): string {
     switch (payload.column.type) {
         case 'uuid':
         case 'character varying':
         case 'text': {
-            return withConstraints(
-                payload.transformers['transform:string'],
-                payload,
-            )
+            const result = payload.transformers['transform:string'](payload)
+            return addConstraints(result, payload)
         }
         case 'integer':
         case 'numeric':
         case 'smallint': {
-            return withConstraints(
-                payload.transformers['transform:number'],
-                payload,
-            )
+            const result = payload.transformers['transform:number'](payload)
+            return addConstraints(result, payload)
         }
         case 'timestamp without time zone':
         case 'timestamp with time zone': {
-            return withConstraints(
-                payload.transformers['transform:date'],
-                payload,
-            )
+            const result = payload.transformers['transform:date'](payload)
+            return addConstraints(result, payload)
         }
         case 'boolean': {
-            return withConstraints(
-                payload.transformers['transform:boolean'],
-                payload,
-            )
+            const result = payload.transformers['transform:boolean'](payload)
+            return addConstraints(result, payload)
         }
         case 'jsonb': {
-            return withConstraints(
-                payload.transformers['transform:json'],
-                payload,
-            )
+            const result = payload.transformers['transform:json'](payload)
+            return addConstraints(result, payload)
         }
         default: {
-            return withConstraints(
-                payload.transformers['transform:unknown'],
-                payload,
-            )
+            const result = payload.transformers['transform:unknown'](payload)
+            return addConstraints(result, payload)
         }
     }
 }
