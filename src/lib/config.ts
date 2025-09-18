@@ -19,12 +19,12 @@ export const defaultConfig: Config = {
 }
 
 /**
- * Read a secret from env or throw
+ * Read a secret from env or return undefined
  */
 export function readSecret(key: string) {
     const value = process.env[key]
     if (!value) {
-        throw new Error(`Missing secret: ${key}`)
+        return undefined
     }
 
     return value
@@ -34,9 +34,12 @@ export function readSecret(key: string) {
  * Load config from environment variables
  */
 export function loadConfigFromEnv(): Config {
+    const url = readSecret('SUPABASE_DB_URL')
+    const tables = readSecret('SUPABASE_TABLES')?.split(',')
+
     return defu({
-        url: readSecret('SUPABASE_DB_URL'),
-        tables: readSecret('SUPABASE_TABLES').split(','),
+        ...(url ? { url } : {}),
+        ...(tables ? { tables } : {}),
     }, defaultConfig)
 }
 
@@ -44,8 +47,10 @@ export function loadConfigFromEnv(): Config {
  * Load config from local supabase project
  */
 export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()): Promise<Config> {
+    const url = await getDbUrlFromCli(cwd)
+
     return defu({
-        url: await getDbUrlFromCli(cwd),
+        ...(url ? { url } : {}),
     }, defaultConfig)
 }
 
@@ -55,8 +60,10 @@ export async function loadConfigFromSupabaseConfig(cwd: string = process.cwd()):
  * bunx supabase status --json
  */
 export async function loadConfigFromSupabaseCli(cwd: string = process.cwd()): Promise<Config> {
+    const url = await getDbUrlFromCli(cwd)
+
     return defu({
-        url: await getDbUrlFromCli(cwd),
+        ...(url ? { url } : {}),
     }, defaultConfig)
 }
 

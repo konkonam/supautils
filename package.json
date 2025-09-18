@@ -57,12 +57,13 @@
     "dist"
   ],
   "scripts": {
+    "eco:bundlesize": "echo '📦 Bundle generated ('$(du -sh dist | cut -f1)')'",
     "build:clean": "rm -rf dist",
     "build:types": "tsc -p tsconfig.build.json",
     "build:js": "bun run build.ts",
     "prebuild": "bun build:clean",
     "build": "bun build:types && bun build:js",
-    "postbuild": "echo '📦 Bundle generated ('$(du -sh dist | cut -f1)')'",
+    "postbuild": "bun eco:bundlesize",
     "dev": "bun playground/index.ts",
     "lint": "eslint ."
   },

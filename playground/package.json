@@ -4,7 +4,6 @@
         "gen": "supautils gen schemas --out ./.sutils/schemas.ts"
     },
     "dependencies": {
-        "supautils": "..",
         "supabase": "^2.22.6"
     }
 }

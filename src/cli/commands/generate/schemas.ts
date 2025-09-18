@@ -5,7 +5,7 @@ import { defineCommand } from 'citty'
 
 export default defineCommand({
     meta: {
-        name: 'schemas',
+        name: 'gen:schemas',
         description: 'Generate Zod schemas from Supabase/Postgres',
     },
     args: {

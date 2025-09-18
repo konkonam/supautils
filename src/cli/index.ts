@@ -11,7 +11,7 @@ const main = defineCommand({
         description: 'Utilities to generate Zod schemas from Supabase/Postgres',
     },
     subCommands: {
-        gen: () => import('./commands/generate').then(r => r.default),
+        'gen:schemas': () => import('./commands/generate/schemas').then(r => r.default),
     },
 })
 
